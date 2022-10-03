@@ -1,0 +1,31 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:14.5
+    environment:
+      POSTGRES_DB: "popov_stepan206"
+      POSTGRES_USER: "popov_stepan206"
+      POSTGRES_PASSWORD: "popov_stepan206"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - ./docker/db/scripts:/docker-entrypoint-initdb.d
+      - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - "5444:5432"
+
+  pgadmin4:
+    container_name: pgadmin4_container
+    image: dpage/pgadmin4
+    restart: unless-stopped
+    links:
+      - postgres:postgres
+    ports:
+      - "8090:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@pgadmin.com"
+      PGADMIN_DEFAULT_PASSWORD: "qwerty"
+    depends_on:
+      - postgres
+    volumes:
+       - ./pgadmin/servers.json:/pgadmin4/servers.json # preconfigured servers/connections
+       - ./pgadmin/pgpass:/pgpass # passwords for the connections in this file
